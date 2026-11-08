@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Dashboard Tài Chính - TỔNG THU CHI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { background-color: #f8fafc; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .bento-card {
+            background: #ffffff;
+            border-radius: 28px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bento-card:hover { box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.08); }
+        .aura-glow-green { background: radial-gradient(circle at 90% 10%, rgba(190, 242, 100, 0.25) 0%, rgba(255, 255, 255, 0) 50%); }
+        .bento-dark-card {
+            background: linear-gradient(145deg, #064e3b 0%, #022c22 100%);
+            border-radius: 28px;
+            color: #ffffff;
+            box-shadow: 0 15px 35px -5px rgba(6, 78, 59, 0.3);
+        }
+        .btn-lime { background: linear-gradient(135deg, #a3e635 0%, #84cc16 100%); color: #1a2e05; font-weight: 800; transition: all 0.2s ease; box-shadow: 0 8px 20px -6px rgba(132, 204, 22, 0.6); border: none; }
+        .btn-lime:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(132, 204, 22, 0.8); }
+        .btn-soft { background-color: #ffffff; border: 1px solid #e2e8f0; color: #334155; transition: all 0.2s ease; }
+        .btn-soft:hover { background-color: #f1f5f9; border-color: #cbd5e1; }
+        .sticky-table-header th { position: sticky; top: 0; background: #f8fafc; z-index: 10; border-bottom: 2px solid #e2e8f0; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Glassmorphism cho các box thông số nhỏ */
+        .glass-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-[1400px] mx-auto space-y-8">
+
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime-100 text-lime-800 text-xs font-bold uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-bolt text-lime-600"></i> LIVE SYNC DASHBOARD
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Báo Cáo Tài Chính 2026
+                </h1>
+                <p class="text-slate-500 text-sm mt-2 flex items-center gap-2 font-medium">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="sync-status">Đang tải và đồng bộ toàn bộ dữ liệu từ Google Sheets...</span>
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <button onclick="fetchAllData()" class="btn-soft px-5 py-3 rounded-2xl text-sm font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-arrows-rotate text-xs" id="refresh-icon"></i> Đồng Bộ
+                </button>
+                <!-- NÚT NHẬP LIỆU MỚI: Link trỏ tới Form của bạn -->
+                <a href="https://docs.google.com/forms/d/1ywSNu9hqY6Tr1n2nxgjOlS553b7UZ2cYG5XdY3pKWuI/viewform" target="_blank" class="btn-lime px-6 py-3 rounded-2xl text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle text-lg"></i> Nhập Liệu
+                </a>
+            </div>
+        </header>
+
+        <!-- KHU VỰC THÔNG SỐ TĨNH (TỪ Ô D1, D2) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div class="bento-card p-6 flex items-center gap-5 bg-gradient-to-r from-emerald-50 to-white">
+                 <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shadow-inner">
+                     <i class="fa-solid fa-sack-dollar"></i>
+                 </div>
+                 <div>
+                     <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tổng Thu Nhập (2026)</p>
+                     <h2 class="text-3xl font-extrabold text-slate-900 mt-1" id="static-total-income">Đang tải...</h2>
+                 </div>
+             </div>
+
+             <div class="bento-card p-6 flex items-center gap-5 bg-gradient-to-r from-sky-50 to-white">
+                 <div class="w-14 h-14 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl shadow-inner">
+                     <i class="fa-solid fa-wallet"></i>
+                 </div>
+                 <div>
+                     <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Số Dư Ví Tiền (2026)</p>
+                     <h2 class="text-3xl font-extrabold text-slate-900 mt-1" id="static-wallet">Đang tải...</h2>
+                 </div>
+             </div>
+        </section>
+
+
+        <!-- KHU VỰC BENTO CARDS THÔNG SỐ ĐỘNG -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="bento-card aura-glow-green p-7 flex flex-col justify-between lg:col-span-2">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-lime-400/20 border border-lime-400/30 flex items-center justify-center text-lime-900 mb-5">
+                        <i class="fa-solid fa-scale-balanced text-xl"></i>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Số Dư Ròng (Theo Tháng Chọn)</span>
+                    <h3 class="text-3xl lg:text-5xl font-extrabold text-slate-900 mt-2" id="kpi-net-balance">0 ₫</h3>
+                    <p class="text-xs text-slate-500 mt-2 font-medium">Lấy (Tổng Thu Động) trừ đi (Tổng Chi Động)</p>
+                </div>
+                
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                    <div class="glass-box p-4 flex items-center gap-3">
+                         <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                             <i class="fa-solid fa-arrow-trend-up"></i>
+                         </div>
+                         <div>
+                             <p class="text-[10px] font-bold text-slate-400 uppercase">Thu Nhập Tương Ứng</p>
+                             <p class="text-lg font-extrabold text-emerald-600" id="kpi-total-income">0 ₫</p>
+                         </div>
+                    </div>
+                    <div class="glass-box p-4 flex items-center gap-3">
+                         <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold">
+                             <i class="fa-solid fa-arrow-trend-down"></i>
+                         </div>
+                         <div>
+                             <p class="text-[10px] font-bold text-slate-400 uppercase">Chi Tiêu Tương Ứng</p>
+                             <p class="text-lg font-extrabold text-rose-600" id="kpi-total-expense">0 ₫</p>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-dark-card p-7 flex flex-col justify-between relative">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-base font-bold text-white">Cơ Cấu Chi Tiêu</h3>
+                        <span class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-lime-400 text-xs">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </span>
+                    </div>
+                    <div class="h-44 relative flex items-center justify-center w-full mt-2">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-emerald-800">
+                    <p class="text-xs font-medium text-emerald-200 opacity-80">
+                        Phân bổ tỷ trọng các mục chi tiêu trong tháng.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- KHU VỰC CHARTS & CONTROLS -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="bento-card p-7 lg:col-span-2">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Chi Tiết Từng Mục Chi</h3>
+                        <p class="text-xs text-slate-500 font-medium mt-1">Phân tích chi tiêu cụ thể cho từng hạng mục</p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5"><i class="fa-solid fa-chart-column text-indigo-500"></i> Analytics View</span>
+                </div>
+                <div class="h-72 relative w-full">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bento-card p-7 flex flex-col bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-900 mb-5 flex items-center gap-2"><i class="fa-solid fa-filter text-slate-400"></i> Bộ Lọc Dữ Liệu</h3>
+                <div class="space-y-5 flex-1">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2.5 block">Lọc Chi Tiêu Theo Tháng</label>
+                        <select id="month-filter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-200 transition-all cursor-pointer">
+                            <option value="ALL">Hiển thị Tổng Năm</option>
+                        </select>
+                        <p class="text-[11px] text-slate-400 mt-3 font-medium leading-relaxed">
+                            Biểu đồ và bảng số liệu sẽ tự động thay đổi tương ứng với Tháng bạn chọn.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- BẢNG DỮ LIỆU CHI TIẾT -->
+        <section class="bento-card p-0">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900">Bảng Dữ Liệu: EXPENSES IN DETAILS / MONTH</h3>
+            </div>
+            <div class="overflow-x-auto max-h-[600px] relative">
+                <table class="w-full text-left border-collapse min-w-[900px]">
+                    <thead class="sticky-table-header text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
+                        <tr>
+                            <th class="p-5 pl-6 bg-slate-50">Tháng</th>
+                            <th class="p-5 bg-slate-50">Tổng Chi</th>
+                            <th class="p-5 bg-slate-50">Di Chuyển</th>
+                            <th class="p-5 bg-slate-50">Giải Trí</th>
+                            <th class="p-5 bg-slate-50">Mua sắm</th>
+                            <th class="p-5 bg-slate-50">Chạy bộ</th>
+                            <th class="p-5 bg-slate-50">Hóa đơn</th>
+                            <th class="p-5 bg-slate-50">Giáo dục</th>
+                            <th class="p-5 bg-slate-50">Ăn uống</th>
+                            <th class="p-5 bg-slate-50">Sức khỏe & Chăm</th>
+                            <th class="p-5 pr-6 bg-slate-50">Quà tặng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MAIN CORE LOGIC -->
+    <script>
+        const SHEET_ID = "193Yk_PXDNL6JD96losv1KEh9DliykeOJSym0XGJDTmY";
+        
+        // 1. Quét Bảng EXPENSES (để vẽ biểu đồ + bảng tháng)
+        const URL_EXPENSES_DETAIL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=1090558433`;
+        // 2. Quét Cột Thu (A:D) để lấy thu nhập từng tháng
+        const URL_INCOME = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=1090558433&range=A:D`;
+        // 3. Quét TỔNG THU NHẬP (D1) và VÍ TIỀN (D2) tĩnh
+        const URL_STATIC_INFO = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=1090558433&range=D1:D2`;
+
+        let expensesData = []; 
+        let incomeData = {};   
+        
+        let barChartInstance = null;
+        let doughnutChartInstance = null;
+
+        const formatVND = (amt) => {
+            if(typeof amt === 'string' && amt.includes('₫')) return amt; // Đã format sẵn từ Sheet
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amt || 0);
+        };
+
+        async function fetchSecure(url) {
+            const res = await fetch(url);
+            const text = await res.text();
+            const jsonStr = text.substring(text.indexOf('({') + 1, text.lastIndexOf('})') + 1);
+            return JSON.parse(jsonStr);
+        }
+
+        async function fetchAllData() {
+            const refreshIcon = document.getElementById('refresh-icon');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+            
+            const statusEl = document.getElementById('sync-status');
+            statusEl.innerText = "Đang đồng bộ Dữ liệu từ Google Sheets...";
+            statusEl.className = "text-emerald-600 font-bold";
+
+            try {
+                const [expenseJson, incomeJson, staticJson] = await Promise.all([
+                    fetchSecure(URL_EXPENSES_DETAIL),
+                    fetchSecure(URL_INCOME),
+                    fetchSecure(URL_STATIC_INFO)
+                ]);
+
+                // --- 1. ĐỌC THÔNG SỐ TĨNH (TỔNG THU & VÍ TIỀN TỪ Ô D1, D2) ---
+                if (staticJson && staticJson.table && staticJson.table.rows) {
+                    const r1 = staticJson.table.rows[0];
+                    const r2 = staticJson.table.rows[1];
+                    
+                    const tongThuStatic = r1 && r1.c[0] ? (r1.c[0].f || r1.c[0].v) : "0 ₫";
+                    const viTienStatic = r2 && r2.c[0] ? (r2.c[0].f || r2.c[0].v) : "0 ₫";
+
+                    document.getElementById('static-total-income').innerText = typeof tongThuStatic === 'number' ? formatVND(tongThuStatic) : tongThuStatic;
+                    document.getElementById('static-wallet').innerText = typeof viTienStatic === 'number' ? formatVND(viTienStatic) : viTienStatic;
+                }
+
+                // --- 2. ĐỌC THU NHẬP ĐỘNG THEO THÁNG ---
+                incomeData = {};
+                if(incomeJson.table && incomeJson.table.rows) {
+                    incomeJson.table.rows.forEach(row => {
+                         const mVal = row.c[0] ? row.c[0].v : null;
+                         const amtVal = row.c[1] ? row.c[1].v : null; 
+                         if(mVal && !isNaN(parseInt(mVal)) && amtVal) {
+                             let amt = parseInt(String(amtVal).replace(/[^0-9]/g, ''));
+                             if(!isNaN(amt)) {
+                                 const month = parseInt(mVal);
+                                 incomeData[month] = (incomeData[month] || 0) + amt;
+                             }
+                         }
+                    });
+                }
+
+                // --- 3. ĐỌC BẢNG EXPENSES CHI TIẾT ---
+                expensesData = [];
+                const rows = expenseJson.table.rows;
+                
+                let startReading = false;
+                let colMapping = {}; 
+                const targetCols = ['Tháng', 'TỔNG CHI', 'Di Chuyển', 'Giải Trí', 'Mua sắm', 'Chạy bộ', 'Hóa đơn', 'Giáo dục', 'Ăn uống', 'Sức khỏe & Chăm', 'Quà tặng'];
+
+                rows.forEach((row, rowIndex) => {
+                    if(!row || !row.c) return;
+                    
+                    let isHeaderRow = false;
+                    row.c.forEach((cell, index) => {
+                        if(cell && cell.v && typeof cell.v === 'string') {
+                            const v = cell.v.trim();
+                            if (v === 'Tháng' || v === 'TỔNG CHI' || v === 'Di Chuyển') {
+                                isHeaderRow = true;
+                                targetCols.forEach(tCol => {
+                                    if(v.includes(tCol) || tCol.includes(v)) colMapping[tCol] = index;
+                                });
+                            }
+                        }
+                    });
+
+                    if (isHeaderRow) {
+                        startReading = true;
+                        return; 
+                    }
+
+                    if (startReading) {
+                        const monthCellIndex = colMapping['Tháng'];
+                        if (monthCellIndex !== undefined && row.c[monthCellIndex] !== null) {
+                            const monthVal = row.c[monthCellIndex].v;
+                            if (monthVal && !isNaN(parseInt(monthVal))) {
+                                let rowData = { Tháng: parseInt(monthVal) };
+                                
+                                targetCols.forEach(tCol => {
+                                    if(tCol !== 'Tháng') {
+                                        const cIdx = colMapping[tCol];
+                                        if (cIdx !== undefined && row.c[cIdx]) {
+                                            let v = String(row.c[cIdx].v).replace(/[^0-9]/g, '');
+                                            rowData[tCol] = parseInt(v) || 0;
+                                        } else {
+                                            rowData[tCol] = 0;
+                                        }
+                                    }
+                                });
+                                expensesData.push(rowData);
+                            }
+                        }
+                    }
+                });
+
+                // Fallback nếu không khớp Header
+                if (expensesData.length === 0) {
+                     rows.forEach(row => {
+                         if(!row || !row.c) return;
+                         for(let i = 10; i < 20; i++) {
+                             if(row.c[i] && row.c[i].v && !isNaN(parseInt(row.c[i].v))) {
+                                 let m = parseInt(row.c[i].v);
+                                 if (m >= 1 && m <= 12 && row.c[i+1]) { 
+                                     let rowData = {
+                                        Tháng: m,
+                                        'TỔNG CHI': parseInt(String(row.c[i+1]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Di Chuyển': parseInt(String(row.c[i+2]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Giải Trí': parseInt(String(row.c[i+3]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Mua sắm': parseInt(String(row.c[i+4]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Chạy bộ': parseInt(String(row.c[i+5]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Hóa đơn': parseInt(String(row.c[i+6]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Giáo dục': parseInt(String(row.c[i+7]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Ăn uống': parseInt(String(row.c[i+8]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Sức khỏe & Chăm': parseInt(String(row.c[i+9]?.v || 0).replace(/[^0-9]/g, '')) || 0,
+                                        'Quà tặng': parseInt(String(row.c[i+10]?.v || 0).replace(/[^0-9]/g, '')) || 0
+                                     };
+                                     if(!expensesData.find(e => e.Tháng === m)) expensesData.push(rowData);
+                                     break; 
+                                 }
+                             }
+                         }
+                     });
+                }
+
+                expensesData.sort((a,b) => a.Tháng - b.Tháng);
+
+                populateMonthFilter();
+                applyFilters();
+                
+                statusEl.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> Đã đồng bộ thành công (Cập nhật 30s/lần)';
+                
+            } catch (error) {
+                console.error("Lỗi đồng bộ JSONP:", error);
+                statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Có lỗi mạng. Đang tự động thử lại...';
+                statusEl.className = "text-rose-600 font-bold";
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        function populateMonthFilter() {
+            const select = document.getElementById('month-filter');
+            const currentVal = select.value; 
+            select.innerHTML = '<option value="ALL">⭐ Hiển thị Tổng Dữ Liệu Năm</option>';
+            
+            expensesData.forEach(d => {
+                select.innerHTML += `<option value="${d.Tháng}">Dữ liệu Tháng ${d.Tháng}</option>`;
+            });
+            
+            if (expensesData.find(d => d.Tháng === parseInt(currentVal))) {
+                select.value = currentVal;
+            }
+        }
+
+        function applyFilters() {
+            const monthVal = document.getElementById('month-filter').value;
+            let dataToShow = [];
+            
+            if (monthVal === 'ALL') {
+                let sumRow = { Tháng: 'Tổng', 'TỔNG CHI': 0, 'Di Chuyển': 0, 'Giải Trí': 0, 'Mua sắm': 0, 'Chạy bộ': 0, 'Hóa đơn': 0, 'Giáo dục': 0, 'Ăn uống': 0, 'Sức khỏe & Chăm': 0, 'Quà tặng': 0 };
+                expensesData.forEach(r => {
+                    Object.keys(sumRow).forEach(k => {
+                        if(k !== 'Tháng') sumRow[k] += r[k];
+                    });
+                });
+                dataToShow = [sumRow];
+            } else {
+                dataToShow = expensesData.filter(r => r.Tháng === parseInt(monthVal));
+            }
+
+            updateKPIAndCharts(dataToShow[0], monthVal);
+            renderTable();
+        }
+
+        function updateKPIAndCharts(dataRow, monthVal) {
+            if (!dataRow) return;
+
+            let totalIncome = 0;
+            if (monthVal === 'ALL') {
+                 totalIncome = Object.values(incomeData).reduce((a,b)=>a+b, 0);
+            } else {
+                 totalIncome = incomeData[monthVal] || 0;
+            }
+
+            let totalExpense = dataRow['TỔNG CHI'];
+            const netBalance = totalIncome - totalExpense;
+
+            document.getElementById('kpi-total-income').innerText = formatVND(totalIncome);
+            document.getElementById('kpi-total-expense').innerText = formatVND(totalExpense);
+            
+            const netEl = document.getElementById('kpi-net-balance');
+            netEl.innerText = formatVND(netBalance);
+            netEl.className = `text-3xl lg:text-5xl font-extrabold mt-2 ${netBalance >= 0 ? 'text-slate-900' : 'text-rose-600'}`;
+
+            const categories = ['Di Chuyển', 'Giải Trí', 'Mua sắm', 'Chạy bộ', 'Hóa đơn', 'Giáo dục', 'Ăn uống', 'Sức khỏe & Chăm', 'Quà tặng'];
+            const catValues = categories.map(c => dataRow[c]);
+            
+            let validCatMap = {};
+            categories.forEach(c => {
+                if(dataRow[c] > 0) validCatMap[c] = dataRow[c];
+            });
+
+            drawBarChart(categories, catValues, monthVal);
+            drawDoughnutChart(validCatMap);
+        }
+
+        // TỐI ƯU HÓA BAR CHART ĐẸP HƠN
+        function drawBarChart(labels, data, monthVal) {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            if (barChartInstance) barChartInstance.destroy();
+
+            const titleStr = monthVal === 'ALL' ? 'Tổng Chi Các Hạng Mục Năm 2026' : `Chi Tiết Tháng ${monthVal}`;
+
+            // Tạo gradient cho cột
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, '#f43f5e'); // Rose-500
+            gradient.addColorStop(1, '#fb7185'); // Rose-400
+
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{ 
+                        label: titleStr, 
+                        data: data, 
+                        backgroundColor: gradient, 
+                        borderRadius: 8, // Bo tròn đẹp hơn
+                        borderSkipped: false,
+                        barPercentage: 0.6,
+                        hoverBackgroundColor: '#e11d48'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { family: 'Plus Jakarta Sans', size: 13 },
+                            bodyFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: { label: (ctx) => ` ${formatVND(ctx.raw)}` }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { color: '#f1f5f9', drawBorder: false }, 
+                            ticks: { 
+                                callback: val => val >= 1000000 ? (val / 1000000) + 'Tr' : (val / 1000) + 'K', 
+                                font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' },
+                                color: '#94a3b8'
+                            } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { 
+                                font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' },
+                                color: '#64748b',
+                                maxRotation: 45,
+                                minRotation: 45
+                            } 
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // TỐI ƯU HÓA DOUGHNUT CHART
+        function drawDoughnutChart(catMap) {
+            const ctx = document.getElementById('doughnutChart').getContext('2d');
+            if (doughnutChartInstance) doughnutChartInstance.destroy();
+            const labels = Object.keys(catMap);
+            const data = Object.values(catMap);
+
+            doughnutChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels.length ? labels : ['Chưa có dữ liệu'],
+                    datasets: [{
+                        data: data.length ? data : [1],
+                        backgroundColor: ['#38bdf8', '#fb7185', '#c084fc', '#facc15', '#4ade80', '#f472b6', '#a78bfa', '#fdba74', '#94a3b8'],
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'right', 
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 11, weight: '500' }, color: '#f8fafc', usePointStyle: true, padding: 12 } 
+                        },
+                        tooltip: { 
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#0f172a',
+                            bodyColor: '#0f172a',
+                            bodyFont: { weight: 'bold' },
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            callbacks: { label: (ctx) => data.length ? ` ${formatVND(ctx.raw)}` : ' Trống' } 
+                        }
+                    },
+                    cutout: '72%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            expensesData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100/60";
+                
+                tr.innerHTML = `
+                    <td class="p-5 pl-6 font-bold text-slate-800">Tháng ${row.Tháng}</td>
+                    <td class="p-5 font-extrabold text-rose-600">${formatVND(row['TỔNG CHI'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Di Chuyển'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Giải Trí'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Mua sắm'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Chạy bộ'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Hóa đơn'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Giáo dục'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Ăn uống'])}</td>
+                    <td class="p-5 text-slate-600 font-medium">${formatVND(row['Sức khỏe & Chăm'])}</td>
+                    <td class="p-5 pr-6 text-slate-600 font-medium">${formatVND(row['Quà tặng'])}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchAllData();
+            setInterval(fetchAllData, 30000); 
+        });
+    </script>
+</body>
+</html>
