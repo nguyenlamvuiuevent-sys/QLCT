@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Summer Bakery 🍩 07_COOKING</title>
+  
+  <!-- Google Font: Lexend (Chuẩn Tiếng Việt 100%, nét bo tròn Pop Diner không bao giờ lỗi dấu) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    :root {
+      --bg-red: #D82222;
+      --bg-cream: #FFF8EE;
+      --bg-card: #FFFFFF;
+      --text-dark: #2B1810;
+      --yellow-pop: #FFCD28;
+      --blue-pop: #2BB3EA;
+      --pink-pop: #FF8BA7;
+      --border-dark: #2B1810;
+      --shadow-pop: 4px 4px 0px #2B1810;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Lexend', sans-serif;
+      background-color: var(--bg-red);
+      color: var(--text-dark);
+      background-image: 
+        radial-gradient(circle, #E63333 20%, transparent 20%),
+        radial-gradient(circle, #E63333 20%, transparent 20%);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+      padding-bottom: 60px;
+    }
+
+    /* Header Poster */
+    header {
+      background-color: var(--bg-red);
+      padding: 20px 24px;
+      border-bottom: 5px solid var(--border-dark);
+      box-shadow: 0 6px 0px rgba(0,0,0,0.2);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--bg-cream);
+      text-shadow: 3px 3px 0px var(--border-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-badge {
+      background: var(--yellow-pop);
+      color: var(--border-dark);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 2.5px solid var(--border-dark);
+      transform: rotate(-3deg);
+      box-shadow: 2px 2px 0px var(--border-dark);
+    }
+
+    .gas-status {
+      background: var(--bg-cream);
+      color: var(--border-dark);
+      border: 2.5px solid var(--border-dark);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 3px 3px 0px var(--border-dark);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background: #4CAF50;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-dark);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    /* Sticker Recipe Tabs */
+    .tabs-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .recipe-tabs {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tab-sticker {
+      background: var(--bg-cream);
+      border: 3px solid var(--border-dark);
+      padding: 10px 20px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--border-dark);
+      cursor: pointer;
+      border-radius: 16px;
+      box-shadow: var(--shadow-pop);
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-sticker:hover {
+      transform: translateY(-2px);
+      background: var(--yellow-pop);
+    }
+
+    .tab-sticker.active {
+      background: var(--blue-pop);
+      color: #FFF;
+      text-shadow: 1.5px 1.5px 0px var(--border-dark);
+      transform: scale(1.03);
+    }
+
+    .btn-add-recipe {
+      background: var(--pink-pop);
+      color: #FFF;
+      border: 3px solid var(--border-dark);
+      padding: 10px 18px;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-pop);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 1px 1px 0px var(--border-dark);
+    }
+
+    .btn-add-recipe:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--border-dark);
+    }
+
+    /* Poster Sheet Card */
+    .poster-card {
+      background: var(--bg-cream);
+      border: 4px solid var(--border-dark);
+      box-shadow: 8px 8px 0px var(--border-dark);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .recipe-header-ribbon {
+      background: var(--yellow-pop);
+      border: 3.5px solid var(--border-dark);
+      padding: 16px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: var(--shadow-pop);
+      margin-bottom: 20px;
+    }
+
+    .recipe-header-ribbon h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--border-dark);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Info Sticker Grid */
+    .info-sticker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .sticker-item {
+      background: #FFF;
+      border: 3px solid var(--border-dark);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 3px 3px 0px var(--border-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sticker-item.calories-badge {
+      background: #FFD8DF;
+      color: #D82222;
+    }
+
+    .sticker-item.pros-cons {
+      grid-column: 1 / -1;
+      background: #E8F7FF;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    /* Action Toolbar */
+    .action-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #FFF;
+      border: 3px solid var(--border-dark);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      box-shadow: 3px 3px 0px var(--border-dark);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .scale-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .btn-scale {
+      background: var(--bg-cream);
+      border: 2px solid var(--border-dark);
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-scale.active, .btn-scale:hover {
+      background: var(--yellow-pop);
+    }
+
+    .btn-print {
+      background: var(--blue-pop);
+      color: #FFF;
+      border: 2.5px solid var(--border-dark);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 2.5px 2.5px 0px var(--border-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .drive-link-btn {
+      background: #4285F4;
+      color: white;
+      border: 2.5px solid var(--border-dark);
+      padding: 8px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: 2.5px 2.5px 0px var(--border-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Tables Grid Layout */
+    .tables-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 900px) {
+      .tables-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .table-card {
+      background: #FFF;
+      border: 3.5px solid var(--border-dark);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow-pop);
+    }
+
+    .table-title {
+      background: var(--pink-pop);
+      color: #FFF;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 12px 16px;
+      border-bottom: 3px solid var(--border-dark);
+      text-shadow: 1px 1px 0px var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table-title.step-title {
+      background: var(--yellow-pop);
+      color: var(--border-dark);
+      text-shadow: none;
+    }
+
+    .pop-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .pop-table th {
+      background: var(--bg-cream);
+      border-bottom: 2.5px solid var(--border-dark);
+      border-right: 1.5px dashed var(--border-dark);
+      padding: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .pop-table td {
+      padding: 10px 12px;
+      border-bottom: 1.5px dashed var(--border-dark);
+      border-right: 1.5px dashed var(--border-dark);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    .pop-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .pop-table td:last-child, .pop-table th:last-child {
+      border-right: none;
+    }
+
+    .pop-table input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--pink-pop);
+      cursor: pointer;
+    }
+
+    /* Modal Form */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(43, 24, 16, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-cream);
+      border: 4px solid var(--border-dark);
+      box-shadow: 8px 8px 0px var(--border-dark);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--border-dark);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-weight: 800;
+      color: var(--border-dark);
+    }
+
+    .close-btn {
+      background: var(--pink-pop);
+      border: 2px solid var(--border-dark);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      color: var(--border-dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 2.5px solid var(--border-dark);
+      border-radius: 10px;
+      font-family: 'Lexend', sans-serif;
+      font-size: 0.9rem;
+      background: #FFF;
+    }
+
+    .ing-row, .step-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 40px;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .step-row {
+      grid-template-columns: 2fr 2fr 40px;
+    }
+
+    .btn-remove-row {
+      background: #E53935;
+      color: white;
+      border: 2px solid var(--border-dark);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-add-row {
+      background: var(--yellow-pop);
+      border: 2px solid var(--border-dark);
+      width: 100%;
+      padding: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .btn-submit-recipe {
+      background: var(--pink-pop);
+      color: white;
+      border: 3px solid var(--border-dark);
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-pop);
+      text-shadow: 1px 1px 0px var(--border-dark);
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #FFF;
+      text-shadow: 2px 2px 0px var(--border-dark);
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    /* Print CSS cho A4 PDF */
+    @media print {
+      body {
+        background: #FFF !important;
+        color: #000 !important;
+      }
+      header, .tabs-wrapper, .action-toolbar, .btn-add-recipe, .modal-overlay {
+        display: none !important;
+      }
+      .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .poster-card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .recipe-header-ribbon {
+        border: 2px solid #000 !important;
+        box-shadow: none !important;
+        background: #F0F0F0 !important;
+      }
+      .table-card {
+        border: 1.5px solid #000 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Poster -->
+  <header>
+    <div class="header-container">
+      <div class="brand-title">
+        <span>🍩 07_COOKING</span>
+        <span class="brand-badge">Sweet Summer</span>
+      </div>
+      <div class="gas-status">
+        <span class="status-dot"></span> Đã kết nối Google Sheets
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    
+    <!-- Sticker Recipe Tabs -->
+    <div class="tabs-wrapper">
+      <div class="recipe-tabs" id="recipeTabs">
+        <!-- Render các tab bánh ở đây -->
+      </div>
+      <button class="btn-add-recipe" onclick="openAddModal()">
+        <i data-lucide="plus-circle"></i> Thêm Bánh Mới
+      </button>
+    </div>
+
+    <!-- Spinner Loading -->
+    <div id="loading" class="loading-spinner">
+      <i data-lucide="loader" class="spin"></i> Đang đồng bộ công thức từ Google Sheets...
+    </div>
+
+    <!-- Sheet Card Chi Tiết -->
+    <div id="recipeSheetContainer"></div>
+
+  </div>
+
+  <!-- Modal Form Thêm Bánh Mới -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🍰 Thêm Công Thức Bánh Mới</h2>
+        <button class="close-btn" onclick="closeAddModal()">&times;</button>
+      </div>
+      <form id="recipeForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label>Tên Bánh *</label>
+          <input type="text" id="inputTitle" class="form-control" placeholder="VD: Bánh Flan Cà Phê, Bánh Chuối..." required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>Điểm Số</label>
+            <input type="text" id="inputRating" class="form-control" value="9/10" />
+          </div>
+          <div class="form-group">
+            <label>Độ Dễ</label>
+            <input type="text" id="inputDifficulty" class="form-control" value="9/10" />
+          </div>
+          <div class="form-group">
+            <label>Calories (Tùy chọn)</label>
+            <input type="text" id="inputCalories" class="form-control" placeholder="Tự tính từ nguyên liệu" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>Ưu điểm</label>
+            <input type="text" id="inputPros" class="form-control" placeholder="Bánh thơm ngon, màu đẹp..." />
+          </div>
+          <div class="form-group">
+            <label>Nhược điểm</label>
+            <input type="text" id="inputCons" class="form-control" placeholder="Hơi mất thời gian hấp..." />
+          </div>
+        </div>
+
+        <!-- Bảng Nguyên liệu -->
+        <div class="form-group">
+          <label>Danh Sách Nguyên Liệu (Tên / Định lượng / Quy đổi / Calories)</label>
+          <div id="ingredientRows">
+            <div class="ing-row">
+              <input type="text" class="form-control ing-name" placeholder="Tên nguyên liệu" required />
+              <input type="text" class="form-control ing-amount" placeholder="Định lượng" />
+              <input type="text" class="form-control ing-converted" placeholder="Quy đổi" />
+              <input type="number" class="form-control ing-calories" placeholder="Calories" />
+              <button type="button" class="btn-remove-row" onclick="removeIngRow(this)">&times;</button>
+            </div>
+          </div>
+          <button type="button" class="btn-add-row" onclick="addIngRow()">+ Thêm Nguyên Liệu</button>
+        </div>
+
+        <!-- Bảng Các Bước Làm -->
+        <div class="form-group">
+          <label>Các Bước Làm (Nội dung bước / Ghi chú)</label>
+          <div id="stepRows">
+            <div class="step-row">
+              <input type="text" class="form-control step-title" placeholder="VD: Làm Caramel, Pha sữa..." required />
+              <input type="text" class="form-control step-note" placeholder="Ghi chú thêm..." />
+              <button type="button" class="btn-remove-row" onclick="removeStepRow(this)">&times;</button>
+            </div>
+          </div>
+          <button type="button" class="btn-add-row" onclick="addStepRow()">+ Thêm Bước Làm</button>
+        </div>
+
+        <button type="submit" class="btn-submit-recipe" id="btnSubmit">
+          <i data-lucide="sparkles"></i> Nhân Bản Sheet Mới & Tạo Folder Ảnh Drive
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // URL Google Apps Script đã deploy
+    const gasScriptUrl = 'https://script.google.com/macros/s/AKfycby6Xz87LxmOGnpxoRbJKGWwaS0m9CHHHG09RPOXHqllN3-FdqjEIAxTPjWMesjhMlg2/exec';
+
+    let recipesData = [];
+    let currentRecipeIdx = 0;
+    let currentMultiplier = 1;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchRecipesFromGAS();
+      lucide.createIcons();
+    });
+
+    // Hàm làm sạch chuỗi Ngày Tháng từ Google Sheets nếu bị lỗi
+    function sanitizeRatingStr(val) {
+      if (!val) return '9/10';
+      const str = val.toString().trim();
+      // Nếu bị trả về kiểu chuỗi ngày ISO như "2026-09-09T17:00:00.000Z"
+      if (str.includes('T') && str.includes('Z')) {
+        try {
+          const d = new Date(str);
+          return `${d.getDate()}/${d.getMonth() + 1}`;
+        } catch(e) {
+          return '9/10';
+        }
+      }
+      return str;
+    }
+
+    // Tải dữ liệu từ Apps Script
+    async function fetchRecipesFromGAS() {
+      document.getElementById('loading').classList.add('active');
+      try {
+        const response = await fetch(gasScriptUrl, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'getRecipes' })
+        });
+        const resData = await response.json();
+        if (resData.status === 'success' && resData.recipes.length > 0) {
+          recipesData = resData.recipes;
+          renderTabs();
+          renderRecipeSheet();
+        }
+      } catch (err) {
+        console.error('Lỗi khi tải từ Google Sheets:', err);
+      } finally {
+        document.getElementById('loading').classList.remove('active');
+      }
+    }
+
+    // Render danh sách Tabs
+    function renderTabs() {
+      const tabsContainer = document.getElementById('recipeTabs');
+      tabsContainer.innerHTML = recipesData.map((recipe, index) => `
+        <button class="tab-sticker ${index === currentRecipeIdx ? 'active' : ''}" onclick="switchTab(${index})">
+          🍪 ${recipe.sheetName || recipe.title}
+        </button>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function switchTab(index) {
+      currentRecipeIdx = index;
+      currentMultiplier = 1;
+      renderTabs();
+      renderRecipeSheet();
+    }
+
+    // Tự động tính tổng Calories
+    function calculateTotalCalories(ingredients, overrideCalories) {
+      if (overrideCalories && overrideCalories !== '0' && overrideCalories !== '0 (kcal)' && overrideCalories !== '') {
+        return overrideCalories;
+      }
+      let total = 0;
+      if (ingredients && ingredients.length > 0) {
+        ingredients.forEach(ing => {
+          const cal = parseFloat(ing.calories);
+          if (!isNaN(cal)) total += cal;
+        });
+      }
+      return total > 0 ? `${total} (kcal)` : '0 (kcal)';
+    }
+
+    // Render Chi tiết Công thức Bánh
+    function renderRecipeSheet() {
+      const container = document.getElementById('recipeSheetContainer');
+      const recipe = recipesData[currentRecipeIdx];
+
+      if (!recipe) return;
+
+      const totalCalories = calculateTotalCalories(recipe.ingredients, recipe.calories);
+      const cleanRating = sanitizeRatingStr(recipe.rating);
+      const cleanDifficulty = sanitizeRatingStr(recipe.difficulty);
+
+      container.innerHTML = `
+        <div class="poster-card">
+          <!-- Header Title Ribbon -->
+          <div class="recipe-header-ribbon">
+            <h1>${recipe.title}</h1>
+          </div>
+
+          <!-- Info Sticker Grid -->
+          <div class="info-sticker-grid">
+            <div class="sticker-item">
+              <span>Đánh giá:</span> 🌟 ${cleanRating}
+            </div>
+            <div class="sticker-item">
+              <span>Độ dễ:</span> 🎯 ${cleanDifficulty}
+            </div>
+            <div class="sticker-item calories-badge">
+              <span>Calories:</span> ⚡ ${totalCalories}
+            </div>
+            ${recipe.pros || recipe.cons ? `
+              <div class="sticker-item pros-cons">
+                ${recipe.pros ? `<div><strong>👍 Ưu điểm:</strong> ${recipe.pros}</div>` : ''}
+                ${recipe.cons ? `<div><strong>👎 Nhược điểm:</strong> ${recipe.cons}</div>` : ''}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Action Toolbar -->
+          <div class="action-toolbar">
+            <div class="scale-box">
+              <span>Quy đổi khẩu phần:</span>
+              <button class="btn-scale ${currentMultiplier === 1 ? 'active' : ''}" onclick="scaleRecipe(1)">x1</button>
+              <button class="btn-scale ${currentMultiplier === 2 ? 'active' : ''}" onclick="scaleRecipe(2)">x2</button>
+              <button class="btn-scale ${currentMultiplier === 3 ? 'active' : ''}" onclick="scaleRecipe(3)">x3</button>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              ${recipe.folderUrl ? `
+                <a href="${recipe.folderUrl}" target="_blank" class="drive-link-btn">
+                  <i data-lucide="folder"></i> Drive Ảnh
+                </a>
+              ` : ''}
+              <button class="btn-print" onclick="window.print()">
+                <i data-lucide="printer"></i> Xuất PDF / In
+              </button>
+            </div>
+          </div>
+
+          <!-- Grid Bảng Nguyên liệu & Các Bước -->
+          <div class="tables-grid">
+            
+            <!-- Cột Nguyên liệu -->
+            <div class="table-card">
+              <div class="table-title">
+                <span>🛒 Nguyên Liệu Làm Bánh</span>
+              </div>
+              <table class="pop-table">
+                <thead>
+                  <tr>
+                    <th style="width: 35px;">STT</th>
+                    <th>Tên Nguyên Liệu</th>
+                    <th>Định Lượng</th>
+                    <th>Quy Đổi</th>
+                    <th style="width: 65px;">Calories</th>
+                    <th style="width: 40px;">Mua</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${recipe.ingredients.map(ing => `
+                    <tr>
+                      <td style="text-align: center; font-weight: bold;">${ing.stt}</td>
+                      <td><strong>${ing.name}</strong></td>
+                      <td style="color: #D82222; font-weight: 700;">${scaleAmount(ing.amount, currentMultiplier)}</td>
+                      <td>${scaleAmount(ing.converted, currentMultiplier)}</td>
+                      <td style="color: #2BB3EA; font-weight: 700;">${ing.calories || 0}</td>
+                      <td style="text-align: center;">
+                        <input type="checkbox" ${ing.bought ? 'checked' : ''}>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Cột Các Bước Thực Hiện -->
+            <div class="table-card">
+              <div class="table-title step-title">
+                <span>👩‍🍳 Cách Làm Bánh</span>
+              </div>
+              <table class="pop-table">
+                <thead>
+                  <tr>
+                    <th style="width: 45px;">Bước</th>
+                    <th>Nội Dung Chi Tiết</th>
+                    <th>Ghi Chú</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${recipe.steps && recipe.steps.length > 0 ? recipe.steps.map(st => `
+                    <tr>
+                      <td style="text-align: center; font-weight: bold;">${st.step}</td>
+                      <td><strong>${st.title}</strong></td>
+                      <td style="color: #666; font-size: 0.85rem;">${st.note || ''}</td>
+                    </tr>
+                  `).join('') : `
+                    <tr><td colspan="3" style="text-align:center; color: #888; padding: 20px;">Chưa có dữ liệu bước làm. Bạn có thể thêm trong Google Sheets nhé!</td></tr>
+                  `}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Quy đổi định lượng khi chọn x1, x2, x3
+    function scaleAmount(amountStr, multiplier) {
+      if (!amountStr || multiplier === 1) return amountStr;
+      return amountStr.replace(/(\d+(\.\d+)?)/g, (match) => {
+        const val = parseFloat(match) * multiplier;
+        return Number.isInteger(val) ? val : val.toFixed(1);
+      });
+    }
+
+    function scaleRecipe(m) {
+      currentMultiplier = m;
+      renderRecipeSheet();
+    }
+
+    // Modal Control
+    function openAddModal() {
+      document.getElementById('addModal').classList.add('active');
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').classList.remove('active');
+    }
+
+    function addIngRow() {
+      const div = document.createElement('div');
+      div.className = 'ing-row';
+      div.innerHTML = `
+        <input type="text" class="form-control ing-name" placeholder="Tên nguyên liệu" required />
+        <input type="text" class="form-control ing-amount" placeholder="Định lượng" />
+        <input type="text" class="form-control ing-converted" placeholder="Quy đổi" />
+        <input type="number" class="form-control ing-calories" placeholder="Calories" />
+        <button type="button" class="btn-remove-row" onclick="removeIngRow(this)">&times;</button>
+      `;
+      document.getElementById('ingredientRows').appendChild(div);
+    }
+
+    function removeIngRow(btn) {
+      const rows = document.querySelectorAll('.ing-row');
+      if (rows.length > 1) btn.parentElement.remove();
+    }
+
+    function addStepRow() {
+      const div = document.createElement('div');
+      div.className = 'step-row';
+      div.innerHTML = `
+        <input type="text" class="form-control step-title" placeholder="Nội dung bước" required />
+        <input type="text" class="form-control step-note" placeholder="Ghi chú" />
+        <button type="button" class="btn-remove-row" onclick="removeStepRow(this)">&times;</button>
+      `;
+      document.getElementById('stepRows').appendChild(div);
+    }
+
+    function removeStepRow(btn) {
+      const rows = document.querySelectorAll('.step-row');
+      if (rows.length > 1) btn.parentElement.remove();
+    }
+
+    // Form Submit
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('inputTitle').value.trim();
+      const rating = document.getElementById('inputRating').value.trim();
+      const difficulty = document.getElementById('inputDifficulty').value.trim();
+      const calories = document.getElementById('inputCalories').value.trim();
+      const pros = document.getElementById('inputPros').value.trim();
+      const cons = document.getElementById('inputCons').value.trim();
+
+      const ingNames = document.querySelectorAll('.ing-name');
+      const ingAmounts = document.querySelectorAll('.ing-amount');
+      const ingConverted = document.querySelectorAll('.ing-converted');
+      const ingCalories = document.querySelectorAll('.ing-calories');
+
+      const ingredients = [];
+      ingNames.forEach((inp, i) => {
+        if (inp.value.trim() !== '') {
+          ingredients.push({
+            stt: i + 1,
+            name: inp.value.trim(),
+            amount: ingAmounts[i].value.trim(),
+            converted: ingConverted[i].value.trim(),
+            calories: ingCalories[i].value.trim() || 0,
+            bought: false
+          });
+        }
+      });
+
+      const stepTitles = document.querySelectorAll('.step-title');
+      const stepNotes = document.querySelectorAll('.step-note');
+
+      const steps = [];
+      stepTitles.forEach((inp, i) => {
+        if (inp.value.trim() !== '') {
+          steps.push({
+            step: i + 1,
+            title: inp.value.trim(),
+            note: stepNotes[i].value.trim()
+          });
+        }
+      });
+
+      const btnSubmit = document.getElementById('btnSubmit');
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = 'Đang Nhân Bản Sheet & Tạo Folder Drive...';
+
+      try {
+        const response = await fetch(gasScriptUrl, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'addRecipe',
+            data: {
+              title: title,
+              rating: rating,
+              difficulty: difficulty,
+              calories: calories,
+              pros: pros,
+              cons: cons,
+              ingredients: ingredients,
+              steps: steps
+            }
+          })
+        });
+
+        const res = await response.json();
+        if (res.status === 'success') {
+          alert('Thành công! Đã tạo trang tính mới và folder Drive.');
+          closeAddModal();
+          fetchRecipesFromGAS();
+        } else {
+          alert('Lỗi: ' + res.message);
+        }
+      } catch (err) {
+        alert('Có lỗi khi gửi dữ liệu đến Google Apps Script!');
+        console.error(err);
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<i data-lucide="sparkles"></i> Nhân Bản Sheet Mới & Tạo Folder Ảnh Drive';
+        lucide.createIcons();
+      }
+    }
+  </script>
+</body>
+</html>
